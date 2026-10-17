@@ -66,3 +66,5 @@ def build(src, name, location=None):
 build('bricolage.ttf', 'display', {'wght': 800, 'opsz': 96, 'wdth': 100})
 build('spacemono-regular.ttf', 'mono')
 build('spacemono-bold.ttf', 'mono-bold')
+build('inter.ttf', 'sans', {'wght': 400, 'opsz': 14})
+build('inter.ttf', 'sans-semi', {'wght': 600, 'opsz': 14})

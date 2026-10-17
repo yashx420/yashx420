@@ -39,7 +39,7 @@ const FEATURED = [
 
 // ---------------------------------------------------------------- text as outlines
 const loadFont = (n) => JSON.parse(fs.readFileSync(path.join(ROOT, 'scripts', 'glyphs', `${n}.json`), 'utf8'));
-const FONTS = { D: loadFont('display'), M: loadFont('mono'), B: loadFont('mono-bold') };
+const FONTS = { D: loadFont('display'), M: loadFont('mono'), B: loadFont('mono-bold'), S: loadFont('sans'), T: loadFont('sans-semi') };
 const n2 = (v) => +(+v).toFixed(2);
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const SPARK = 'M0 -1C.08 -.22 .22 -.08 1 0C.22 .08 .08 .22 0 1C-.08 .22 -.22 .08 -1 0C-.22 -.08 -.08 -.22 0 -1Z';
@@ -607,19 +607,19 @@ const APPS = [
     by: 'built by yash', metric: { value: '280+', unit: 'commits' },
     big: 'built it.', sub: 'app · site · backend · growth',
     notes: [
-      { when: 'now', text: 'shipped the android app, the site & the backend. payments + whatsapp too.' },
-      { when: '1h ago', text: 'growth mode: whatsapp campaigns, partner pages, content & ads plumbing.' },
+      { when: 'now', title: 'Built end to end', body: 'Android app, website and backend, including payments and WhatsApp.' },
+      { when: '1h ago', title: 'Growth', body: 'WhatsApp campaigns, partner pages and content, plus the Meta pixel and ads setup.' },
     ],
     swipe: 'swipe up to get it on android',
   },
   {
     file: 'app-bro', name: 'Bro', kind: 'BRO · AI SHOPPING AGENT', icon: 'bro-icon.webp',
     pal: { base: '#03100C', glowA: '#18A877', glowB: '#7CF5C8', accent: '#5CF0B6', ink: '#EFFFF8', dim: '#A8CFC0' },
-    by: 'growth by yash', metric: null,
-    big: 'growth.', sub: 'go-to-market · copy · bro radar',
+    by: 'marketing & growth by yash', metric: null,
+    big: 'growth.', sub: 'content · ads · analytics · push · socials',
     notes: [
-      { when: 'now', text: "go-to-market: strategy, positioning & copy in bro's voice. + the askbro.io revamp." },
-      { when: '1h ago', text: "built bro radar: an AI growth engine for X that writes replies in bro's voice." },
+      { when: 'now', title: 'Marketing & growth, end to end', body: 'Content, Meta ads, PostHog analytics, OneSignal push, X and Instagram.' },
+      { when: '1h ago', title: 'Go-to-market', body: "Strategy, positioning and Bro's voice. Led the askbro.io revamp and built bro radar." },
     ],
     swipe: 'swipe up to get the app',
   },
@@ -637,7 +637,7 @@ function wrap(s, f, str, size, maxW) {
 
 function lockCard(a, i) {
   const W = 600, H = 780, B = 9, P = a.pal, cx = W / 2;
-  const s = new Svg(W, H, `${a.name} lock screen: ${a.by}. ${a.notes.map((n) => n.text).join(' ')}`);
+  const s = new Svg(W, H, `${a.name} lock screen: ${a.by}. ${a.notes.map((n) => `${n.title}: ${n.body}`).join(' ')}`);
   s.css.push(`
 .drift{animation:drift 18s ease-in-out infinite alternate}.d2{animation-duration:23s;animation-delay:-9s}
 @keyframes drift{0%{transform:translate(0,0)}50%{transform:translate(60px,50px)}100%{transform:translate(-40px,20px)}}
@@ -690,7 +690,7 @@ function lockCard(a, i) {
   s.add(`<g class="la"><image xlink:href="${art(a.icon)}" x="46" y="42" width="60" height="60" clip-path="url(#ic1)"/>`,
     s.text('D', a.name, 122, 73, 27, { fill: '#fff' }),
     `<circle class="live" cx="127" cy="94" r="4" fill="${P.accent}"/><circle cx="127" cy="94" r="4" fill="${P.accent}"/>`,
-    s.text('M', a.by, 140, 99, 15, { fill: P.dim }), right, `</g>`);
+    s.text('S', a.by, 140, 99.5, 16, { fill: P.dim }), right, `</g>`);
 
   // the "clock": role in giant type, letters rising in
   s.add(s.text('B', a.kind, cx, 206, 13, { fill: P.accent, anchor: 'middle', ls: 3.5, cls: 'sub' }));
@@ -702,15 +702,16 @@ function lockCard(a, i) {
     s.text('M', a.sub, cx, 378, 17, { fill: P.dim, anchor: 'middle', cls: 'sub' }));
 
   // notifications
+  // iOS-style: icon, semibold title + time, regular body (Inter, not the mono)
   a.notes.forEach((n, j) => {
-    const y = 424 + j * 120, lines = wrap(s, 'M', n.text, 16, 452).slice(0, 2), cid = `ni${j}`;
-    s.defs.push(`<clipPath id="${cid}"><rect x="50" y="${y + 20}" width="32" height="32" rx="8"/></clipPath>`);
+    const y = 420 + j * 116, lines = wrap(s, 'S', n.body, 15, 448).slice(0, 2), cid = `ni${j}`;
+    s.defs.push(`<clipPath id="${cid}"><rect x="46" y="${y + 18}" width="40" height="40" rx="10"/></clipPath>`);
     s.add(`<g class="nt" style="animation-delay:${n2(1.5 + j * 0.45)}s">`,
-      `<rect x="28" y="${y}" width="544" height="108" rx="26" fill="#fff" fill-opacity=".09" stroke="#fff" stroke-opacity=".13"/>`,
-      `<image xlink:href="${art(a.icon)}" x="50" y="${y + 20}" width="32" height="32" clip-path="url(#${cid})"/>`,
-      s.text('B', a.name.toUpperCase(), 96, y + 41, 14, { fill: P.ink, ls: 1.5 }),
-      s.text('M', n.when, 550, y + 41, 13, { fill: P.dim, anchor: 'end' }),
-      ...lines.map((ln, q) => s.text('M', ln, 96, y + 70 + q * 23, 16, { fill: P.ink, opacity: 0.9 })),
+      `<rect x="28" y="${y}" width="544" height="104" rx="26" fill="#fff" fill-opacity=".1" stroke="#fff" stroke-opacity=".12"/>`,
+      `<image xlink:href="${art(a.icon)}" x="46" y="${y + 18}" width="40" height="40" clip-path="url(#${cid})"/>`,
+      s.text('T', n.title, 102, y + 36, 16.5, { fill: P.ink }),
+      s.text('S', n.when, 552, y + 36, 13.5, { fill: P.dim, anchor: 'end' }),
+      ...lines.map((ln, q) => s.text('S', ln, 102, y + 60 + q * 20, 15, { fill: P.ink, opacity: 0.78 })),
       `</g>`);
   });
 
