@@ -14,7 +14,10 @@ DL = os.path.join(HERE, '.fonts')
 OUT = os.path.join(HERE, 'glyphs')
 SRC = 'https://raw.githubusercontent.com/google/fonts/main/ofl/'
 FILES = {'bricolage.ttf': 'bricolagegrotesque/BricolageGrotesque%5Bopsz%2Cwdth%2Cwght%5D.ttf',
-         'spacemono-regular.ttf': 'spacemono/SpaceMono-Regular.ttf', 'spacemono-bold.ttf': 'spacemono/SpaceMono-Bold.ttf'}
+         'spacemono-regular.ttf': 'spacemono/SpaceMono-Regular.ttf', 'spacemono-bold.ttf': 'spacemono/SpaceMono-Bold.ttf',
+         'inter.ttf': 'inter/Inter%5Bopsz%2Cwght%5D.ttf',
+         'fraunces.ttf': 'fraunces/Fraunces%5BSOFT%2CWONK%2Copsz%2Cwght%5D.ttf',
+         'fraunces-italic.ttf': 'fraunces/Fraunces-Italic%5BSOFT%2CWONK%2Copsz%2Cwght%5D.ttf'}
 os.makedirs(DL, exist_ok=True)
 os.makedirs(OUT, exist_ok=True)
 for name, url in FILES.items():
@@ -68,3 +71,5 @@ build('spacemono-regular.ttf', 'mono')
 build('spacemono-bold.ttf', 'mono-bold')
 build('inter.ttf', 'sans', {'wght': 400, 'opsz': 14})
 build('inter.ttf', 'sans-semi', {'wght': 600, 'opsz': 14})
+build('fraunces.ttf', 'serif', {'wght': 650, 'opsz': 72, 'SOFT': 50, 'WONK': 0})
+build('fraunces-italic.ttf', 'serif-it', {'wght': 600, 'opsz': 72, 'SOFT': 100, 'WONK': 1})

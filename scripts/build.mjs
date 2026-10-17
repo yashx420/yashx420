@@ -39,7 +39,7 @@ const FEATURED = [
 
 // ---------------------------------------------------------------- text as outlines
 const loadFont = (n) => JSON.parse(fs.readFileSync(path.join(ROOT, 'scripts', 'glyphs', `${n}.json`), 'utf8'));
-const FONTS = { D: loadFont('display'), M: loadFont('mono'), B: loadFont('mono-bold'), S: loadFont('sans'), T: loadFont('sans-semi') };
+const FONTS = { D: loadFont('display'), M: loadFont('mono'), B: loadFont('mono-bold'), S: loadFont('sans'), T: loadFont('sans-semi'), F: loadFont('serif'), I: loadFont('serif-it') };
 const n2 = (v) => +(+v).toFixed(2);
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const SPARK = 'M0 -1C.08 -.22 .22 -.08 1 0C.22 .08 .08 .22 0 1C-.08 .22 -.22 .08 -1 0C-.22 -.08 -.08 -.22 0 -1Z';
@@ -726,6 +726,121 @@ function lockCard(a, i) {
   return s;
 }
 
+// ---------------------------------------------------------------- Auréa feature (top of "things i've built")
+// The brand idea in motion: it looks like a gift (ivory box, satin ribbon, bow), but what comes out is an
+// experience pass, not a thing. Fraunces is Auréa's own brand serif.
+function aureaFeature() {
+  const W = 1200, H = 620;
+  const G = { gold: '#E3BF76', deep: '#A97E36', cream: '#FBF3E6', maroon: '#5A1A24', ivory1: '#FCF6EA', ivory2: '#E7D8BE' };
+  const s = new Svg(W, H, "Auréa: gift the moment, not the mug. Experience gifting I built end to end.");
+  s.css.push(COMMON_CSS, `
+.lid{transform-box:fill-box;transform-origin:0% 100%;transform:translate(-30px,-262px) rotate(-8deg);animation:lid .95s cubic-bezier(.3,1.45,.5,1) .6s backwards}
+@keyframes lid{from{transform:translate(0,0) rotate(0deg)}}
+.lidbob{animation:float 4.4s ease-in-out 1.6s infinite}
+.pass{animation:pass 1.1s cubic-bezier(.2,1.25,.35,1) 1s backwards}
+@keyframes pass{from{transform:translateY(250px)}}
+.ex{opacity:0;animation:ex 9s infinite}.ex.first{opacity:1}
+@keyframes ex{0%{opacity:0;transform:translateY(6px)}4%,31%{opacity:1;transform:translateY(0)}35%,100%{opacity:0;transform:translateY(-4px)}}
+.fw{transform-box:fill-box;transform-origin:center;opacity:0;animation:fw 3.6s ease-out infinite}
+@keyframes fw{0%{transform:scale(.2);opacity:0}6%{opacity:1}34%{transform:scale(1.25);opacity:0}100%{opacity:0}}
+.in{animation:in .7s cubic-bezier(.2,.9,.25,1) backwards}
+@keyframes in{from{opacity:0;transform:translateY(14px)}}
+.swoosh{animation:swoosh .9s ease-out 1.4s backwards}@keyframes swoosh{from{stroke-dashoffset:260}}`);
+  s.defs.push(
+    `<clipPath id="fc"><rect width="${W}" height="${H}" rx="28"/></clipPath>`,
+    `<linearGradient id="bgA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3A0E19"/><stop offset=".55" stop-color="#1C0810"/><stop offset="1" stop-color="#110509"/></linearGradient>`,
+    `<radialGradient id="halo"><stop offset="0" stop-color="${G.gold}" stop-opacity=".26"/><stop offset="1" stop-color="${G.gold}" stop-opacity="0"/></radialGradient>`,
+    `<linearGradient id="ivory" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${G.ivory1}"/><stop offset="1" stop-color="${G.ivory2}"/></linearGradient>`,
+    `<linearGradient id="side" x1="0" y1="0" x2="1" y2="0"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".14"/></linearGradient>`,
+    `<linearGradient id="satin" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#C99A4A"/><stop offset=".45" stop-color="#F4D795"/><stop offset="1" stop-color="#B0843B"/></linearGradient>`,
+    `<linearGradient id="satinV" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F4D795"/><stop offset="1" stop-color="#B0843B"/></linearGradient>`,
+    `<filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="14"/></filter>`,
+    `<filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="9"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0"/></filter>`,
+    `<filter id="psh" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#000" flood-opacity=".4"/></filter>`,
+    `<clipPath id="passclip"><rect x="0" y="0" width="560" height="392"/><rect x="160" y="392" width="220" height="168"/></clipPath>`,
+    `<mask id="tick"><rect x="-180" y="-96" width="360" height="192" rx="16" fill="#fff"/><circle cx="-108" cy="-96" r="11" fill="#000"/><circle cx="-108" cy="96" r="11" fill="#000"/></mask>`,
+  );
+  s.add(`<g clip-path="url(#fc)"><rect width="${W}" height="${H}" fill="url(#bgA)"/>`,
+    `<circle cx="270" cy="300" r="330" fill="url(#halo)"/>`,
+    `<rect width="${W}" height="${H}" filter="url(#grain)" opacity=".06"/>`);
+
+  // --- the pass (behind the box; rises out of it)
+  const names = ['Starry Night Combo', 'Couple Wheel Pottery', 'In My City Combo'];
+  let pass = `<g mask="url(#tick)"><rect x="-180" y="-96" width="360" height="192" fill="${G.cream}"/>`
+    + `<rect x="-180" y="-96" width="72" height="192" fill="${G.gold}" opacity=".22"/></g>`
+    + `<line x1="-108" y1="-80" x2="-108" y2="80" stroke="${G.deep}" stroke-opacity=".55" stroke-width="2" stroke-dasharray="4 6"/>`
+    + `<g transform="translate(-144 -42) scale(15)"><path class="spin" d="${SPARK}" fill="${G.deep}"/></g>`
+    + `<g transform="translate(-138 64) rotate(-90)">${s.text('B', 'GIFTED', 0, 0, 13, { fill: G.maroon, ls: 3 })}</g>`
+    + s.text('B', 'AURÉA · EXPERIENCE PASS', -86, -52, 12, { fill: G.deep, ls: 2.4 });
+  names.forEach((n, k) => {
+    let fs = 27;
+    while (s.measure('F', n, fs) > 250 && fs > 18) fs -= 1;
+    pass += s.text('F', n, -86, -8, fs, { fill: G.maroon, cls: k ? 'ex' : 'ex first', style: `animation-delay:${k * 3}s` });
+  });
+  pass += s.text('S', 'valid 90 days · they pick the date', -86, 22, 13.5, { fill: G.maroon, opacity: 0.72 });
+  let bars = '', bx = 50;
+  for (let k = 0; k < 26; k++) { const w = [2, 1, 3, 1, 2][k % 5]; bars += `<rect x="${bx}" y="44" width="${w}" height="30" fill="${G.maroon}" opacity=".75"/>`; bx += w + 2.2; }
+  pass += bars + s.text('M', 'No. 0001', -86, 70, 12, { fill: G.maroon, opacity: 0.55 });
+  s.add(`<g clip-path="url(#passclip)"><g transform="translate(270 286) rotate(-5)"><g class="pass" filter="url(#psh)">${pass}</g></g></g>`);
+
+  // --- fireworks around the pass
+  const burst = (x, y, r, color, delay) => {
+    let g = '';
+    for (let k = 0; k < 12; k++) {
+      const a = (k * 30) * Math.PI / 180, r1 = r * 0.45, r2 = r;
+      g += `<line x1="${n2(Math.cos(a) * r1)}" y1="${n2(Math.sin(a) * r1)}" x2="${n2(Math.cos(a) * r2)}" y2="${n2(Math.sin(a) * r2)}" stroke="${color}" stroke-width="3" stroke-linecap="round"/>`;
+    }
+    return `<g transform="translate(${x} ${y})"><g class="fw" style="animation-delay:${delay}s">${g}<circle r="4" fill="${G.cream}"/></g></g>`;
+  };
+  s.add(burst(78, 196, 42, G.gold, 1.9), burst(476, 150, 32, G.cream, 2.4), burst(488, 360, 24, G.gold, 2.9), burst(56, 420, 20, G.cream, 3.3),
+    spark(140, 470, 9, G.gold, 'tw', 0.6), spark(498, 452, 7, G.cream, 'tw', 1.5), spark(46, 230, 6, G.gold, 'tw', 2.2));
+
+  // --- the gift box: shadow, body, ribbon; the lid pops open (resting state: open)
+  s.add(`<ellipse cx="270" cy="574" rx="150" ry="14" fill="#000" opacity=".45" filter="url(#soft)"/>`,
+    `<rect x="160" y="390" width="220" height="170" rx="10" fill="url(#ivory)"/><rect x="160" y="390" width="220" height="170" rx="10" fill="url(#side)"/>`,
+    `<rect x="256" y="390" width="28" height="170" fill="url(#satin)"/>`,
+    `<rect x="160" y="390" width="220" height="10" fill="#000" opacity=".08"/>`);
+  const bow = `<path d="M270 346C242 302 198 310 214 338C224 354 252 351 270 346Z" fill="url(#satinV)" stroke="${G.deep}" stroke-width="2"/>`
+    + `<path d="M270 346C298 302 342 310 326 338C316 354 288 351 270 346Z" fill="url(#satinV)" stroke="${G.deep}" stroke-width="2"/>`
+    + `<path d="M226 326C236 318 250 322 258 334" stroke="#fff" stroke-opacity=".55" stroke-width="3" fill="none" stroke-linecap="round"/>`
+    + `<ellipse cx="270" cy="345" rx="13" ry="11" fill="url(#satinV)" stroke="${G.deep}" stroke-width="2"/>`;
+  const tag = `<path d="M282 350Q330 356 352 382" stroke="${G.deep}" stroke-width="1.5" fill="none"/>`
+    + `<g transform="translate(352 382) rotate(14)"><rect x="-4" y="-2" width="46" height="30" rx="7" fill="${G.cream}" stroke="${G.deep}" stroke-width="1.5"/><circle cx="3" cy="13" r="2.6" fill="${G.deep}"/>`
+    + `<g transform="translate(25 13) scale(9)"><path d="${SPARK}" fill="${G.deep}"/></g></g>`;
+  s.add(`<g class="lid"><g class="lidbob">`,
+    `<rect x="146" y="346" width="248" height="48" rx="10" fill="url(#ivory)"/><rect x="146" y="346" width="248" height="48" rx="10" fill="url(#side)"/>`,
+    `<rect x="256" y="346" width="28" height="48" fill="url(#satin)"/>`, bow, tag, `</g></g>`);
+
+  // --- the manifesto
+  const X = 612;
+  s.add(`<g class="in" style="animation-delay:.3s">${s.text('B', 'AURÉA · GIFTED MOMENTS', X, 100, 14, { fill: G.gold, ls: 4 })}</g>`);
+  const w1 = s.measure('F', 'Gift the ', 62), w2 = s.measure('I', 'moment,', 62);
+  s.add(`<g class="in" style="animation-delay:.55s">`, s.text('F', 'Gift the ', X - 3, 178, 62, { fill: G.cream }),
+    s.text('I', 'moment,', X - 3 + w1, 178, 62, { fill: G.gold }), `</g>`,
+    `<path class="swoosh" d="M${n2(X + w1)} 198Q${n2(X + w1 + w2 / 2)} 188 ${n2(X + w1 + w2 - 6)} 196" stroke="${G.gold}" stroke-width="4" stroke-linecap="round" fill="none" stroke-dasharray="260"/>`,
+    `<g class="in" style="animation-delay:.8s">${s.text('F', 'not the mug.', X - 3, 252, 62, { fill: G.cream })}</g>`);
+  const lines = [
+    'Stuff collects dust. Moments collect stories.',
+    'Still wrapped like a gift: ribbon, bow, the full drama.',
+    'They pick the date. You still get all the credit.',
+    'Spa, dining, adventure, gaming, from partners we trust.',
+  ];
+  lines.forEach((ln, k) => {
+    const y = 322 + k * 44;
+    s.add(`<g class="in" style="animation-delay:${n2(1.15 + k * 0.22)}s">`,
+      s.text('B', `0${k + 1}`, X, y, 13, { fill: G.gold }),
+      s.text('S', ln, X + 40, y + 1, 18.5, { fill: G.cream, opacity: 0.86 }), `</g>`);
+  });
+  const cta = 'aureagifts.com ↗', cw = s.measure('T', cta, 16) + 40;
+  s.add(`<g class="in" style="animation-delay:2.1s">`,
+    `<rect x="${X}" y="520" width="${n2(cw)}" height="42" rx="21" fill="${G.gold}"/>`,
+    s.text('T', cta, n2(X + cw / 2), 546.5, 16, { fill: '#2A0A12', anchor: 'middle' }),
+    s.text('M', 'built end to end by yash', n2(X + cw + 22), 546, 14, { fill: G.cream, opacity: 0.6 }), `</g>`);
+
+  s.add(`</g>`, `<rect x=".5" y=".5" width="${W - 1}" height="${H - 1}" rx="27.5" fill="none" stroke="${G.gold}" stroke-opacity=".28"/>`);
+  return s;
+}
+
 // ---------------------------------------------------------------- footer
 function footer() {
   const W = 1200, H = 230;
@@ -771,6 +886,7 @@ write('hero.svg', hero());
 write('about.svg', about());
 write('stack.svg', stack());
 write('built.svg', header("things i've built (and mostly didn't break)", C.lime));
+write('aurea-feature.svg', aureaFeature());
 write('wild.svg', header("sites i've released into the wild", C.pink));
 write('snake-title.svg', header('a snake is eating my contribution graph. as one does.', C.violet, C.ink));
 write('footer.svg', footer());

@@ -37,6 +37,10 @@
 </p>
 
 <p align="center">
+  <a href="https://aureagifts.com"><img src="assets/aurea-feature.svg" width="100%" alt="Auréa, gifted moments: gift the moment, not the mug. Stuff collects dust, moments collect stories. Still wrapped like a gift: ribbon, bow, the full drama. They pick the date, you still get all the credit. Spa, dining, adventure, gaming, from partners we trust. Built end to end by yash." /></a>
+</p>
+
+<p align="center">
   <a href="https://github.com/yashx420/palmbeat"><img src="assets/cards/palmbeat.svg" width="49%" alt="palmbeat: gesture-controlled loop machine, webcam hand tracking plays melody, bass and drums in the browser" /></a>
   <a href="https://github.com/yashx420/Sentinel"><img src="assets/cards/sentinel.svg" width="49%" alt="Sentinel: news-bias radar, a fine-tuned transformer labels headlines left, center or right" /></a>
   <a href="https://github.com/yashx420/lead-engine"><img src="assets/cards/lead-engine.svg" width="49%" alt="lead-engine: lead intelligence for US law firms" /></a>
