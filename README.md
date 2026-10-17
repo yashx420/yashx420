@@ -5,7 +5,12 @@
 </p>
 
 <p align="center">
-  <img src="assets/about.svg" width="100%" alt="whoami: Yash, full-stack dev. Now building Auréa, experience gifting (app in Expo, site in WooCommerce). Stack: TypeScript, React, React Native, Next.js, Node, Python, PHP, LLMs. Fuel: deadlines, lo-fi and too many open tabs." />
+  <a href="https://www.linkedin.com/in/yashx420"><img src="assets/social-linkedin.svg" width="49%" alt="LinkedIn: in/yashx420" /></a>
+  <a href="https://www.instagram.com/askbro.io"><img src="assets/social-askbro.svg" width="49%" alt="Instagram: @askbro.io, Bro runs your 5 to 9 in Bengaluru" /></a>
+</p>
+
+<p align="center">
+  <img src="assets/about.svg" width="100%" alt="whoami: Yash, growth and marketing manager at Quarq Labs Inc. Plot twist: also writes the code (web, mobile and AI). Now building Auréa, experience gifting (app in Expo, site in WooCommerce). Socials: linkedin.com/in/yashx420, instagram.com/askbro.io" />
 </p>
 
 <p align="center">

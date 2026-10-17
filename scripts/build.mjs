@@ -213,7 +213,7 @@ function hero() {
     `<rect width="${W}" height="${H}" fill="url(#dots)"/>`);
 
   // status pill
-  const status = 'now building Auréa: gifting experiences, not things';
+  const status = 'growth & marketing manager @ Quarq Labs · building Auréa';
   const sw = s.measure('M', status, 15);
   s.add(`<rect x="52" y="38" width="${n2(sw + 62)}" height="40" rx="20" fill="#fff" fill-opacity=".05" stroke="#fff" stroke-opacity=".12"/>`,
     `<circle class="pulse" cx="76" cy="58" r="5" fill="${C.lime}"/><circle cx="76" cy="58" r="5" fill="${C.lime}"/>`,
@@ -232,6 +232,7 @@ function hero() {
 
   // typing taglines
   const lines = [
+    'growth marketer who ships code',
     'professional button-maker',
     'turns caffeine into commits',
     'ships web, mobile & AI things',
@@ -290,16 +291,18 @@ function about() {
   const prompt = [['yash', C.lime], [':', C.dim], ['~', C.cyan], ['$ ', C.ink]];
   const L = [
     { cmd: 'whoami' },
-    { out: [['yash', C.ink], [' · full-stack dev · builds web, mobile & AI things', C.dim]] },
+    { out: [['yash', C.ink], [' · growth & marketing manager @ ', C.dim], ['Quarq Labs Inc.', C.violet]] },
+    { cmd: 'cat ~/.plot-twist' },
+    { out: [['also writes the code', C.lime], [': web, mobile & AI things. yes, really.', C.dim]] },
     { cmd: 'cat now.txt' },
     { out: [['building Auréa', C.lime], [': experience gifting. app (expo) + site (woocommerce)', C.dim]] },
-    { cmd: 'ls ~/stack' },
-    { out: [['typescript/  react/  react-native/  next.js/  node/  python/  php/  llms/', C.cyan]] },
     { cmd: 'cat ~/.fuel' },
     { out: [['deadlines, lo-fi and an unreasonable number of open tabs', C.dim]] },
     { cmd: 'sudo make it-pop' },
     { out: [['[sudo] password for yash: ********', C.pink]] },
     { out: [['ok. adding 12% more pizzazz... done.', C.ink]] },
+    { cmd: 'cat ~/.socials' },
+    { out: [['linkedin.com/in/yashx420', C.cyan], ['  ·  ', C.faint], ['instagram.com/askbro.io', C.pink]] },
     { cmd: '' },
   ];
   const W = 1200, TOP = 104, LH = 38, FS = 20, X = 44;
@@ -545,6 +548,53 @@ function stats(d) {
   return s;
 }
 
+// ---------------------------------------------------------------- social ticket
+const SOCIALS = [
+  { file: 'social-linkedin', kind: 'LINKEDIN', handle: 'in/yashx420', line: 'the professional me. wears a collar.',
+    cta: 'connect ↗', accent: '#4AA3FF', logo: 'linkedin' },
+  { file: 'social-askbro', kind: 'INSTAGRAM', handle: '@askbro.io', line: 'Bro runs your 5 to 9 in Bengaluru',
+    cta: 'follow ↗', accent: C.pink, logo: 'instagram' },
+];
+
+function social(x, i) {
+  const W = 600, H = 170, STUB = 150;
+  const s = new Svg(W, H, `${x.kind.toLowerCase()}: ${x.handle}`);
+  s.css.push(`
+.shine{animation:shine 5s ease-in-out infinite}@keyframes shine{0%,55%{transform:translateX(-260px)}85%,100%{transform:translateX(820px)}}
+.logo{transform-box:fill-box;transform-origin:center;animation:logo 3.4s ease-in-out infinite}
+@keyframes logo{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-6px) rotate(4deg)}}
+.nudge{animation:nudge 2.2s ease-in-out infinite}@keyframes nudge{0%,100%{transform:translate(0,0)}50%{transform:translate(4px,-4px)}}
+.ring{transform-box:fill-box;transform-origin:center;animation:ring 2.4s ease-out infinite}@keyframes ring{0%{transform:scale(1);opacity:.55}100%{transform:scale(1.5);opacity:0}}`);
+  // ticket shape: notches punched out where the stub tears off (a mask, so the page shows through)
+  s.defs.push(`<mask id="tk"><rect width="${W}" height="${H}" rx="22" fill="#fff"/><circle cx="${STUB}" cy="0" r="14" fill="#000"/><circle cx="${STUB}" cy="${H}" r="14" fill="#000"/></mask>`,
+    `<linearGradient id="ig" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FEDA75"/><stop offset=".28" stop-color="#FA7E1E"/><stop offset=".55" stop-color="#D62976"/><stop offset=".8" stop-color="#962FBF"/><stop offset="1" stop-color="#4F5BD5"/></linearGradient>`,
+    `<linearGradient id="sh" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".09"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>`);
+  const L = 92, lx = (STUB - L) / 2, ly = (H - L) / 2;
+  const logo = x.logo === 'linkedin'
+    ? `<rect x="${lx}" y="${ly}" width="${L}" height="${L}" rx="20" fill="#0A66C2"/>` + s.text('D', 'in', STUB / 2 + 2, ly + 70, 66, { fill: '#fff', anchor: 'middle' })
+    : `<rect x="${lx}" y="${ly}" width="${L}" height="${L}" rx="26" fill="url(#ig)"/>`
+      + `<rect x="${lx + 20}" y="${ly + 20}" width="${L - 40}" height="${L - 40}" rx="15" fill="none" stroke="#fff" stroke-width="6.5"/>`
+      + `<circle cx="${STUB / 2}" cy="${H / 2}" r="12" fill="none" stroke="#fff" stroke-width="6.5"/>`
+      + `<circle cx="${lx + L - 30}" cy="${ly + 30}" r="4.2" fill="#fff"/>`;
+  const cta = s.measure('B', x.cta, 16) + 34;
+  s.add(`<g mask="url(#tk)">`,
+    `<rect width="${W}" height="${H}" fill="${C.card}"/>`,
+    `<circle cx="${W - 30}" cy="${H + 20}" r="150" fill="${x.accent}" opacity=".08"/>`,
+    `<rect width="${STUB}" height="${H}" fill="#fff" fill-opacity=".025"/>`,
+    `<g class="shine" style="animation-delay:-${i * 2.5}s"><rect x="0" y="-40" width="180" height="${H + 80}" fill="url(#sh)" transform="skewX(-20)"/></g>`,
+    `<rect x="1" y="1" width="${W - 2}" height="${H - 2}" rx="21" fill="none" stroke="${x.accent}" stroke-opacity=".35" stroke-width="2"/>`,
+    `</g>`,
+    `<line x1="${STUB}" y1="20" x2="${STUB}" y2="${H - 20}" stroke="#fff" stroke-opacity=".18" stroke-width="2" stroke-dasharray="3 7" stroke-linecap="round"/>`,
+    `<rect class="ring" x="${lx}" y="${ly}" width="${L}" height="${L}" rx="24" fill="none" stroke="${x.accent}" stroke-width="2"/>`,
+    `<g class="logo">${logo}</g>`,
+    s.text('B', x.kind, STUB + 28, 52, 14, { fill: x.accent, ls: 2.5 }),
+    s.text('D', x.handle, STUB + 26, 98, 36),
+    s.text('M', x.line, STUB + 28, 134, 16, { fill: C.dim }),
+    `<g class="nudge"><rect x="${n2(W - 28 - cta)}" y="30" width="${n2(cta)}" height="34" rx="17" fill="${x.accent}"/>`,
+    s.text('B', x.cta, W - 28 - cta / 2, 52, 16, { fill: C.dark, anchor: 'middle' }), `</g>`);
+  return s;
+}
+
 // ---------------------------------------------------------------- footer
 function footer() {
   const W = 1200, H = 230;
@@ -593,6 +643,7 @@ write('built.svg', header("things i've built (and mostly didn't break)", C.lime)
 write('wild.svg', header("sites i've released into the wild", C.pink));
 write('snake-title.svg', header('a snake is eating my contribution graph. as one does.', C.violet, C.ink));
 write('footer.svg', footer());
+SOCIALS.forEach((x, i) => write(`${x.file}.svg`, social(x, i)));
 if (data) {
   const byName = new Map(data.repositories.nodes.map((r) => [r.name.toLowerCase(), r]));
   FEATURED.forEach((p, i) => {
