@@ -295,7 +295,7 @@ function about() {
     { cmd: 'cat ~/.plot-twist' },
     { out: [['also writes the code', C.lime], [': web, mobile & AI things. yes, really.', C.dim]] },
     { cmd: 'cat now.txt' },
-    { out: [['building Auréa', C.lime], [': experience gifting. app (expo) + site (woocommerce)', C.dim]] },
+    { out: [['building Auréa', C.lime], [' + ', C.dim], ['growing Bro', '#45E4A9'], [': experience gifting & an AI friend for Bengaluru', C.dim]] },
     { cmd: 'cat ~/.fuel' },
     { out: [['deadlines, lo-fi and an unreasonable number of open tabs', C.dim]] },
     { cmd: 'sudo make it-pop' },
@@ -595,6 +595,203 @@ function social(x, i) {
   return s;
 }
 
+// ---------------------------------------------------------------- app trading cards
+// Holo "trading cards" for the apps: real screens in a phone, a role stamp, and the role as the card's moves.
+// Art lives in scripts/art (cut from the Play Store listing and the apps' own assets).
+const art = (f) => `data:image/webp;base64,${fs.readFileSync(path.join(ROOT, 'scripts', 'art', f)).toString('base64')}`;
+
+const APPS = [
+  {
+    file: 'app-aurea', name: 'Auréa', kind: 'EXPERIENCE GIFTING', no: '01', icon: 'aurea-icon.webp',
+    screens: ['aurea-1.webp', 'aurea-2.webp', 'aurea-3.webp'], phone: [384, 306, -5],
+    pal: { bg: '#1A080C', art1: '#93394A', art2: '#2C0A10', accent: '#E3BF76', ink: '#F8EFE3', dim: '#CDB0A8', faint: '#8E6A66', line: '#46212A', ink2: '#5E1F1F', stamp: '#EFCB82' },
+    stamp: 'BUILT BY YASH', stampAt: [168, 404, -8], role: 'built it, end to end',
+    moves: [
+      { pips: 2, name: 'full-stack build', desc: 'android app (expo), site + backend (woocommerce, php), payments & whatsapp.', value: '280+', unit: 'commits' },
+      { pips: 1, name: 'growth mode', desc: 'whatsapp campaigns, partner pages, content & ads plumbing.' },
+    ],
+    flavor: 'gifts you can live, not just unwrap.', cta: 'get it on android ↗',
+  },
+  {
+    file: 'app-bro', name: 'Bro', kind: 'AI SHOPPING AGENT', no: '02', icon: 'bro-icon.webp',
+    screens: ['bro-1.webp', 'bro-2.webp', 'bro-3.webp'], phone: [250, 310, 5],
+    pal: { bg: '#05140F', art1: '#F2FDF8', art2: '#A9EACF', accent: '#45E4A9', ink: '#EEFFF7', dim: '#A3CBBB', faint: '#5A8172', line: '#163A2F', ink2: '#05140F', stamp: '#0E9C69' },
+    stamp: 'GROWTH BY YASH', stampAt: [446, 178, 7], role: 'growth & go-to-market',
+    moves: [
+      { pips: 2, name: 'go-to-market', desc: "GTM strategy, positioning & copy in bro's voice. led the askbro.io revamp." },
+      { pips: 1, name: 'bro radar', desc: "AI growth engine for X: finds posts worth a reply, writes it in bro's voice." },
+    ],
+    flavor: "everything is 4.3 stars. bro knows which one isn't.", cta: 'get the app ↗',
+  },
+];
+
+function wrap(s, f, str, size, maxW) {
+  const lines = [];
+  for (const w of str.split(' ')) {
+    const cur = lines.at(-1);
+    if (cur && s.measure(f, `${cur} ${w}`, size) <= maxW) lines[lines.length - 1] = `${cur} ${w}`;
+    else lines.push(w);
+  }
+  return lines;
+}
+
+function phoneMock(s, a) {
+  const [cx, cy, tilt] = a.phone, PW = 176, PH = 372, SW = 162, SH = 358;
+  const x = cx - PW / 2, y = cy - PH / 2;
+  s.defs.push(`<clipPath id="scr"><rect x="${x + 7}" y="${y + 7}" width="${SW}" height="${SH}" rx="22"/></clipPath>`);
+  const imgs = a.screens.map((f, i) => `<image class="scr${i ? '' : ' first'}" style="animation-delay:${i * 3}s" xlink:href="${art(f)}" x="${x + 7}" y="${y + 7}" width="${SW}" height="${SH}" preserveAspectRatio="xMidYMin slice"/>`).join('');
+  return `<g transform="rotate(${tilt} ${cx} ${cy})"><g class="phone">`
+    + `<rect x="${x}" y="${y}" width="${PW}" height="${PH}" rx="29" fill="#0B0B10" filter="url(#drop)"/>`
+    + `<rect x="${x + 7}" y="${y + 7}" width="${SW}" height="${SH}" rx="22" fill="#fff"/><g clip-path="url(#scr)">${imgs}</g>`
+    + `<rect x="${x + 0.75}" y="${y + 0.75}" width="${PW - 1.5}" height="${PH - 1.5}" rx="28.5" fill="none" stroke="#fff" stroke-opacity=".25" stroke-width="1.5"/>`
+    + `</g></g>`;
+}
+
+function rubberStamp(s, label, [cx, cy, rot], color) {
+  const FS = 20, LS = 1.6, w = s.measure('B', label, FS, LS) + 50, h = 54;
+  return `<g transform="translate(${cx} ${cy}) rotate(${rot})"><g class="slam"><g filter="url(#ink)">`
+    + `<rect x="${n2(-w / 2)}" y="${-h / 2}" width="${n2(w)}" height="${h}" rx="9" fill="none" stroke="${color}" stroke-width="5"/>`
+    + `<rect x="${n2(-w / 2 + 7)}" y="${-h / 2 + 7}" width="${n2(w - 14)}" height="${h - 14}" rx="5" fill="none" stroke="${color}" stroke-width="1.6"/>`
+    + s.text('B', label, 0, 7, FS, { fill: color, anchor: 'middle', ls: LS })
+    + `</g></g></g>`;
+}
+
+// Auréa: a gold gift that pops its lid (sparks fly), and a couple of chips
+function decoAurea(s, P) {
+  s.defs.push(`<radialGradient id="halo"><stop offset="0" stop-color="${P.accent}" stop-opacity=".38"/><stop offset="1" stop-color="${P.accent}" stop-opacity="0"/></radialGradient>`);
+  s.css.push(`.lid{transform-box:fill-box;transform-origin:0% 100%;animation:lid 3.4s ease-in-out infinite}
+@keyframes lid{0%,56%,92%,100%{transform:translate(0,0) rotate(0deg)}64%{transform:translate(-4px,-30px) rotate(-16deg)}72%{transform:translate(-3px,-24px) rotate(-12deg)}82%{transform:translate(0,-4px) rotate(-2deg)}}`);
+  const G = [160, 268], st = `stroke="${P.accent}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"`, stf = `${st} fill="none"`;
+  let burst = '';
+  for (let k = 0; k < 8; k++) {
+    const ang = (-160 + k * 20) * Math.PI / 180, d = 70 + (k % 3) * 16;
+    const dx = n2(Math.cos(ang) * d), dy = n2(Math.sin(ang) * d - 10);
+    s.css.push(`.pt${k}{transform-box:fill-box;transform-origin:center;animation:pt${k} 3.4s ease-out infinite}@keyframes pt${k}{0%,58%{transform:translate(0,0) scale(0);opacity:0}62%{transform:translate(0,0) scale(1);opacity:1}84%{transform:translate(${dx}px,${dy}px) scale(.5);opacity:0}100%{opacity:0}}`);
+    burst += k % 2
+      ? `<circle class="pt${k}" cx="0" cy="-40" r="4.5" fill="${P.accent}"/>`
+      : `<g class="pt${k}"><path transform="translate(0 -40) scale(9)" d="${SPARK}" fill="${P.stamp}"/></g>`;
+  }
+  const back = `<circle cx="384" cy="300" r="230" fill="url(#halo)"/>`
+    + spark(70, 150, 10, P.accent, 'tw', 0.3) + spark(262, 150, 7, P.accent, 'tw', 1.2) + spark(548, 300, 9, P.accent, 'tw', 0.8) + spark(56, 470, 7, P.accent, 'tw', 1.9)
+    + `<g transform="translate(${G[0]} ${G[1]})"><g class="float" style="animation-duration:5s">`
+    + `<ellipse cx="0" cy="92" rx="58" ry="7" fill="#000" opacity=".25"/>`
+    + `<rect x="-56" y="-6" width="112" height="80" rx="9" fill="${P.accent}" fill-opacity=".1" ${st}/><path d="M0 -6V74" ${stf}/>`
+    + `<g class="lid"><rect x="-66" y="-34" width="132" height="28" rx="7" fill="${P.accent}" fill-opacity=".14" ${st}/><path d="M0 -34V-6" ${stf}/>`
+    + `<path d="M0 -34C-12 -60 -46 -62 -42 -44C-39 -33 -18 -33 0 -34Z" ${stf}/><path d="M0 -34C12 -60 46 -62 42 -44C39 -33 18 -33 0 -34Z" ${stf}/></g>`
+    + burst
+    + `<g transform="translate(70 -74) scale(17)"><path class="spin" d="${SPARK}" fill="${P.accent}"/></g>`
+    + `</g></g>`;
+  // chips sit in front of the phone
+  const front = chip(s, 478, 170, [`<path transform="scale(8)" d="${SPARK}" fill="${P.accent}"/>`, 16], 'gift in a tap', P, 1)
+    + chip(s, 284, 472, null, 'instant e-voucher', P, 2.2);
+  return { back, front };
+}
+
+// a cream pill with dark text (optionally an icon on its left), floating
+function chip(s, cx, cy, icon, label, P, delay) {
+  const FS = 15, iw = icon ? icon[1] + 8 : 0, w = s.measure('B', label, FS) + 32 + iw;
+  return `<g transform="translate(${cx} ${cy})"><g class="float" style="animation-delay:-${delay}s">`
+    + `<rect x="${n2(-w / 2)}" y="-18" width="${n2(w)}" height="36" rx="18" fill="${P.ink}" filter="url(#drop)"/>`
+    + (icon ? `<g transform="translate(${n2(-w / 2 + 16 + icon[1] / 2)} 0)">${icon[0]}</g>` : '')
+    + s.text('B', label, n2(-w / 2 + 16 + iw), 5.5, FS, { fill: P.ink2 })
+    + `</g></g>`;
+}
+
+// Bro: the price scan (a ring hops across the stores and lands on the cheapest) + the mascot with bags
+function decoBro(s, P) {
+  const stores = ['blinkit', 'zepto', 'instamart', 'dmart'], X = 92, Y0 = 186, DY = 74, R = 25;
+  let out = `<circle cx="470" cy="420" r="120" fill="${P.accent}" opacity=".28" filter="url(#soft)"/><circle cx="90" cy="150" r="90" fill="#fff" opacity=".7" filter="url(#soft)"/>`;
+  stores.forEach((st, i) => {
+    const y = Y0 + i * DY;
+    s.defs.push(`<clipPath id="st${i}"><circle cx="${X}" cy="${y}" r="${R}"/></clipPath>`);
+    out += `<g class="float" style="animation-delay:-${i * 0.7}s;animation-duration:3.6s"><circle cx="${X}" cy="${y}" r="${R + 4}" fill="#fff" filter="url(#drop)"/>`
+      + `<image xlink:href="${art(`store-${st}.webp`)}" x="${X - R}" y="${y - R}" width="${2 * R}" height="${2 * R}" clip-path="url(#st${i})" preserveAspectRatio="xMidYMid slice"/></g>`;
+  });
+  const D = 4.8, ys = [Y0 + DY, Y0 + 2 * DY, Y0 + 3 * DY, Y0];
+  out += `<circle cx="${X}" cy="${Y0}" r="${R + 9}" fill="none" stroke="${P.stamp}" stroke-width="3.5">`
+    + `<animate attributeName="cy" dur="${D}s" repeatCount="indefinite" calcMode="discrete" values="${ys.join(';')}" keyTimes="0;.14;.28;.42"/>`
+    + `<animate attributeName="r" dur="${D}s" repeatCount="indefinite" values="${R + 9};${R + 13};${R + 9};${R + 13};${R + 9};${R + 13};${R + 9};${R + 15};${R + 9};${R + 9}" keyTimes="0;.03;.14;.17;.28;.31;.42;.46;.52;1"/></circle>`;
+  const tag = 'cheapest!', tw = s.measure('B', tag, 14) + 26;
+  out += `<g><animate attributeName="opacity" dur="${D}s" repeatCount="indefinite" calcMode="discrete" values="0;1;0" keyTimes="0;.44;.97"/>`
+    + `<rect x="${n2(X - tw / 2)}" y="${Y0 - R - 44}" width="${n2(tw)}" height="28" rx="14" fill="${P.stamp}"/>`
+    + `<path d="M${X - 6} ${Y0 - R - 17}L${X} ${Y0 - R - 9}L${X + 6} ${Y0 - R - 17}Z" fill="${P.stamp}"/>`
+    + s.text('B', tag, X, Y0 - R - 25, 14, { fill: '#fff', anchor: 'middle' }) + `</g>`;
+  out += spark(548, 300, 9, P.stamp, 'tw', 0.5) + spark(372, 120, 7, P.stamp, 'tw', 1.4) + spark(560, 470, 6, P.stamp, 'tw', 2.1);
+  return out;
+}
+
+function broMascot() {
+  return `<g transform="translate(372 352)"><g class="float" style="animation-duration:3.4s">`
+    + `<ellipse cx="96" cy="150" rx="70" ry="9" fill="#05140F" opacity=".18"/>`
+    + `<image xlink:href="${art('bro-mascot.webp')}" x="0" y="0" width="200" height="137"/></g></g>`;
+}
+
+function appCard(a, i) {
+  const W = 600, H = 920, F = 9, P = a.pal;
+  const s = new Svg(W, H, `${a.name}, ${a.kind.toLowerCase()}. my role: ${a.role}`);
+  s.css.push(COMMON_CSS, `
+.scr{opacity:0;animation:scr 9s infinite}.scr.first{opacity:1}
+@keyframes scr{0%{opacity:0}5%,33%{opacity:1}38%,100%{opacity:0}}
+.phone{animation:phone 5s ease-in-out infinite}@keyframes phone{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.glare{animation:glare 7.5s ease-in-out infinite}@keyframes glare{0%,60%{transform:translateX(-520px)}86%,100%{transform:translateX(1020px)}}
+.slam{transform-box:fill-box;transform-origin:center;animation:slam .6s cubic-bezier(.25,1.5,.45,1) 1.2s backwards}
+@keyframes slam{0%{transform:scale(2.6) rotate(-8deg);opacity:0}55%{transform:scale(.92);opacity:1}100%{transform:scale(1)}}
+.nudge{animation:nudge 2.2s ease-in-out infinite}@keyframes nudge{0%,100%{transform:translate(0,0)}50%{transform:translate(4px,-3px)}}`);
+  const foil = [C.lime, C.cyan, C.violet, C.pink, C.orange, P.accent].map((c, k, arr) => `<stop offset="${n2(k / (arr.length - 1))}" stop-color="${c}"/>`).join('');
+  s.defs.push(
+    `<clipPath id="card"><rect x="${F}" y="${F}" width="${W - 2 * F}" height="${H - 2 * F}" rx="22"/></clipPath>`,
+    `<clipPath id="artw"><rect x="30" y="112" width="540" height="400" rx="18"/></clipPath>`,
+    `<clipPath id="ic"><rect x="34" y="32" width="60" height="60" rx="15"/></clipPath>`,
+    `<linearGradient id="foil" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="600" y2="920" spreadMethod="reflect">${foil}<animateTransform attributeName="gradientTransform" type="translate" values="0 0;1200 1840" dur="10s" repeatCount="indefinite"/></linearGradient>`,
+    `<linearGradient id="artg" x1="0" y1="0" x2=".45" y2="1"><stop offset="0" stop-color="${P.art1}"/><stop offset="1" stop-color="${P.art2}"/></linearGradient>`,
+    `<linearGradient id="gl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".13"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>`,
+    `<filter id="ink" x="-15%" y="-30%" width="130%" height="160%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="11" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.6 2.2" result="m"/><feComposite in="SourceGraphic" in2="m" operator="in"/></filter>`,
+    `<filter id="drop" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#000" flood-opacity=".35"/></filter>`,
+    `<filter id="soft" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="40"/></filter>`,
+  );
+  // frame + header
+  const kw = s.measure('B', a.kind, 12, 2) + 28;
+  s.add(`<rect width="${W}" height="${H}" rx="30" fill="url(#foil)"/>`,
+    `<g clip-path="url(#card)"><rect width="${W}" height="${H}" fill="${P.bg}"/><rect width="${W}" height="${H}" fill="url(#foil)" opacity=".05"/>`,
+    `<image xlink:href="${art(a.icon)}" x="34" y="32" width="60" height="60" clip-path="url(#ic)"/>`,
+    `<rect x="34.5" y="32.5" width="59" height="59" rx="14.5" fill="none" stroke="#fff" stroke-opacity=".18"/>`,
+    s.text('D', a.name, 110, 82, 46, { fill: P.ink }),
+    `<rect x="${n2(566 - kw)}" y="47" width="${n2(kw)}" height="30" rx="15" fill="none" stroke="${P.accent}" stroke-opacity=".7" stroke-width="1.5"/>`,
+    s.text('B', a.kind, n2(566 - kw / 2), 66.5, 12, { fill: P.accent, anchor: 'middle', ls: 2 }));
+  // art window
+  const deco = a.file === 'app-aurea' ? decoAurea(s, P) : { back: decoBro(s, P), front: '' };
+  s.add(`<g clip-path="url(#artw)"><rect x="30" y="112" width="540" height="400" fill="url(#artg)"/>`,
+    deco.back,
+    phoneMock(s, a),
+    a.file === 'app-bro' ? broMascot() : '',
+    deco.front,
+    rubberStamp(s, a.stamp, a.stampAt, P.stamp),
+    `</g>`, `<rect x="30.5" y="112.5" width="539" height="399" rx="17.5" fill="none" stroke="${P.accent}" stroke-opacity=".4"/>`);
+  // role + moves
+  const lw = s.measure('B', 'MY ROLE', 13, 3);
+  s.add(s.text('B', 'MY ROLE', 36, 552, 13, { fill: P.accent, ls: 3 }),
+    `<rect x="${n2(36 + lw + 14)}" y="547" width="${n2(530 - lw - 14)}" height="1.5" fill="${P.accent}" opacity=".35"/>`,
+    s.text('D', a.role, 34, 598, 34, { fill: P.ink }));
+  let y = 642;
+  a.moves.forEach((m) => {
+    for (let k = 0; k < m.pips; k++) s.add(`<circle cx="${44 + k * 17}" cy="${y - 6}" r="6.5" fill="${P.accent}"/><circle cx="${44 + k * 17}" cy="${y - 6}" r="2.4" fill="${P.bg}"/>`);
+    const maxW = m.value ? 400 : 486;
+    s.add(s.text('B', m.name, 84, y, 17, { fill: P.ink }));
+    wrap(s, 'M', m.desc, 16, maxW).slice(0, 2).forEach((ln, k) => s.add(s.text('M', ln, 84, y + 25 + k * 23, 16, { fill: P.dim })));
+    if (m.value) s.add(s.text('D', m.value, 566, y + 14, 36, { fill: P.accent, anchor: 'end' }), s.text('M', m.unit, 566, y + 36, 13, { fill: P.faint, anchor: 'end' }));
+    y += 88;
+  });
+  s.add(`<rect x="34" y="812" width="532" height="1.5" fill="${P.line}"/>`,
+    s.text('M', `"${a.flavor}"`, 34, 843, 15, { fill: P.faint }));
+  const cw = s.measure('B', a.cta, 16) + 36;
+  s.add(s.text('M', `${a.no}/02 · in your pocket`, 34, 886, 13, { fill: P.faint }),
+    `<g class="nudge"><rect x="${n2(566 - cw)}" y="862" width="${n2(cw)}" height="38" rx="19" fill="${P.accent}"/>`,
+    s.text('B', a.cta, n2(566 - cw / 2), 886.5, 16, { fill: P.bg, anchor: 'middle' }), `</g>`);
+  // holo glare over everything
+  s.add(`<g class="glare" style="animation-delay:-${i * 3.2}s"><rect x="0" y="-60" width="240" height="${H + 120}" fill="url(#gl)" transform="skewX(-22)"/></g>`, `</g>`);
+  return s;
+}
+
 // ---------------------------------------------------------------- footer
 function footer() {
   const W = 1200, H = 230;
@@ -644,6 +841,8 @@ write('wild.svg', header("sites i've released into the wild", C.pink));
 write('snake-title.svg', header('a snake is eating my contribution graph. as one does.', C.violet, C.ink));
 write('footer.svg', footer());
 SOCIALS.forEach((x, i) => write(`${x.file}.svg`, social(x, i)));
+write('apps.svg', header('apps in your pocket (partly my fault)', C.cyan));
+APPS.forEach((a, i) => write(`${a.file}.svg`, appCard(a, i)));
 if (data) {
   const byName = new Map(data.repositories.nodes.map((r) => [r.name.toLowerCase(), r]));
   FEATURED.forEach((p, i) => {

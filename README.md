@@ -10,7 +10,22 @@
 </p>
 
 <p align="center">
-  <img src="assets/about.svg" width="100%" alt="whoami: Yash, growth and marketing manager at Quarq Labs Inc. Plot twist: also writes the code (web, mobile and AI). Now building Auréa, experience gifting (app in Expo, site in WooCommerce). Socials: linkedin.com/in/yashx420, instagram.com/askbro.io" />
+  <img src="assets/about.svg" width="100%" alt="whoami: Yash, growth and marketing manager at Quarq Labs Inc. Plot twist: also writes the code (web, mobile and AI). Now: building Auréa (experience gifting) and growing Bro (an AI friend for Bengaluru). Socials: linkedin.com/in/yashx420, instagram.com/askbro.io" />
+</p>
+
+<p align="center">
+  <img src="assets/apps.svg" width="100%" alt="apps in your pocket (partly my fault)" />
+</p>
+
+<p align="center">
+  <a href="https://play.google.com/store/apps/details?id=gift.aurea.app"><img src="assets/app-aurea.svg" width="49%" alt="Auréa, the experience gifting app. My role: built it end to end, the Android app (Expo), the site and backend (WooCommerce, PHP), payments and WhatsApp, plus growth: campaigns, partner pages, content and ads plumbing." /></a>
+  <a href="https://onelink.to/askbro"><img src="assets/app-bro.svg" width="49%" alt="Bro, the AI friend and shopping agent for Bengaluru. My role: growth and go-to-market, GTM strategy, positioning, copy and the askbro.io revamp, plus bro radar, an AI growth engine for X." /></a>
+</p>
+
+<p align="center">
+  <b>Auréa</b>: <a href="https://play.google.com/store/apps/details?id=gift.aurea.app">get it on android</a> ↗ &nbsp;·&nbsp; <a href="https://aureagifts.com">aureagifts.com</a> ↗
+  &nbsp;&nbsp;✦&nbsp;&nbsp;
+  <b>Bro</b>: <a href="https://onelink.to/askbro">get the app</a> ↗ &nbsp;·&nbsp; <a href="https://askbro.io">askbro.io</a> ↗
 </p>
 
 <p align="center">
