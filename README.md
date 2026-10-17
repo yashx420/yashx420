@@ -18,8 +18,8 @@
 </p>
 
 <p align="center">
-  <a href="https://play.google.com/store/apps/details?id=gift.aurea.app"><img src="assets/app-aurea.svg" width="49%" alt="Auréa, the experience gifting app. My role: built it end to end, the Android app (Expo), the site and backend (WooCommerce, PHP), payments and WhatsApp, plus growth: campaigns, partner pages, content and ads plumbing." /></a>
-  <a href="https://onelink.to/askbro"><img src="assets/app-bro.svg" width="49%" alt="Bro, the AI friend and shopping agent for Bengaluru. My role: growth and go-to-market, GTM strategy, positioning, copy and the askbro.io revamp, plus bro radar, an AI growth engine for X." /></a>
+  <a href="https://play.google.com/store/apps/details?id=gift.aurea.app"><img src="assets/app-aurea.svg" width="49%" alt="Auréa lock screen. Live Activity: built by yash, 280+ commits. My role: built it end to end, the Android app, the site and the backend, payments and WhatsApp, plus growth: WhatsApp campaigns, partner pages, content and ads." /></a>
+  <a href="https://onelink.to/askbro"><img src="assets/app-bro.svg" width="49%" alt="Bro lock screen. Live Activity: growth by yash. My role: go-to-market strategy, positioning and copy in Bro's voice, the askbro.io revamp, and bro radar, an AI growth engine for X." /></a>
 </p>
 
 <p align="center">
