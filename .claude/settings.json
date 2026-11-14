@@ -1,0 +1,1 @@
+{ "permissions": { "allow": ["Bash", "Read", "Edit", "WebFetch", "WebSearch", "Artifact", "mcp__Claude_Docs"] } }
